@@ -4,3 +4,4 @@ pandas
 python-dotenv
 requests
 matplotlib
+openai
