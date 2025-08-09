@@ -25,7 +25,7 @@ ALARM_SECONDS = 10
 ALLOWED_MODULES = {
     "math", "json", "re", "itertools", "functools", "random", "statistics",
     "string", "collections", "heapq", "bisect", "datetime",
-    "pandas", "numpy", "matplotlib",
+    "pandas", "numpy", "matplotlib","openai"
 }
 
 def hard_limits():
