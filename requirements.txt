@@ -1,0 +1,6 @@
+streamlit
+gspread
+pandas
+python-dotenv
+requests
+matplotlib
