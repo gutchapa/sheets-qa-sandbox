@@ -12,14 +12,14 @@ Usage:
 """
 import os
 import argparse
-import pickle
+import json
 from dotenv import load_dotenv
 load_dotenv()
 import pandas as pd
 import gspread
 
 def sheets_to_dfs(sheet_ids, service_account_json):
-    gc = gspread.service_account_from_dict(eval(service_account_json))
+    gc = gspread.service_account_from_dict(json.loads(service_account_json))
     dfs = []
     for sid in [s.strip() for s in sheet_ids.split(",") if s.strip()]:
         sh = gc.open_by_key(sid)
@@ -48,7 +48,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sheets", help="comma separated sheet ids")
     parser.add_argument("--excel", help="local excel file path")
-    parser.add_argument("--out", help="output pickle path", default="injected_dfs.pkl")
+    parser.add_argument("--out", help="output json path", default="injected_dfs.json")
     args = parser.parse_args()
 
     if not args.sheets and not args.excel:
@@ -65,8 +65,11 @@ def main():
     else:
         dfs = excel_to_dfs(args.excel)
 
-    with open(args.out, "wb") as fh:
-        pickle.dump(dfs, fh, protocol=pickle.HIGHEST_PROTOCOL)
+    # Convert dataframes to JSON serializable format
+    json_dfs = [(name, df.to_dict(orient="split")) for name, df in dfs]
+
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(json_dfs, f, indent=2)
 
     print("Wrote", args.out, "with", len(dfs), "worksheets")
 

@@ -6,7 +6,7 @@ Runs the target script in a heavily restricted environment.
 - Sets a wall-clock alarm
 - Replaces builtins to disable file I/O and restrict imports
 - Disables networking while keeping socket/ssl attributes
-- Loads injected_dfs.pkl (if present) and injects as variable `dfs`
+- Loads injected_dfs.json (if present) and injects as variable `dfs`
 """
 
 import sys
@@ -14,7 +14,8 @@ import os
 import signal
 import resource
 import types
-import pickle
+import json
+import pandas as pd
 
 # Child tunables
 CPU_TIME_SECONDS = 3
@@ -127,10 +128,14 @@ def run_target(target_path):
     # attempt to load injected dfs (while file I/O still allowed)
     injected_dfs = None
     try:
-        inject_path = os.path.join(os.path.dirname(target_path), "injected_dfs.pkl")
+        inject_path = os.path.join(os.path.dirname(target_path), "injected_dfs.json")
         if os.path.exists(inject_path):
-            with open(inject_path, "rb") as fh:
-                injected_dfs = pickle.load(fh)
+            with open(inject_path, "r", encoding="utf-8") as f:
+                json_dfs = json.load(f)
+            injected_dfs = [
+                (name, pd.DataFrame(data["data"], columns=data["columns"]))
+                for name, data in json_dfs
+            ]
     except Exception:
         injected_dfs = None
 

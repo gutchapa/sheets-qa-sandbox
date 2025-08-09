@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Sandbox controller:
-  python3 sandbox.py path/to/untrusted_script.py [path/to/injected_dfs.pkl]
+  python3 sandbox.py path/to/untrusted_script.py [path/to/injected_dfs.json]
 
 Copies files into a temp directory and runs child_runner.py there.
 Captures stdout/stderr and enforces wall timeout.
@@ -17,7 +17,7 @@ WALL_TIMEOUT = 20  # seconds
 PYTHON_BIN = sys.executable
 
 if len(sys.argv) < 2:
-    print("Usage: python3 sandbox.py <script.py> [injected_dfs.pkl]")
+    print("Usage: python3 sandbox.py <script.py> [injected_dfs.json]")
     sys.exit(2)
 
 target = Path(sys.argv[1]).resolve()
@@ -38,7 +38,7 @@ try:
     shutil.copy2(target, target_copy)
 
     if inject_src:
-        inject_dest = tmpdir / "injected_dfs.pkl"
+        inject_dest = tmpdir / "injected_dfs.json"
         shutil.copy2(inject_src, inject_dest)
 
     child_runner = Path(__file__).parent.resolve() / "child_runner.py"
