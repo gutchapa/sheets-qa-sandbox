@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import json
 import streamlit as st
 import gspread
 import pandas as pd
@@ -61,7 +62,7 @@ def call_llm(prompt, model="mistralai/mistral-7b-instruct"):
 # ---- If no injected dfs, load from Google Sheets ----
 if not dfs:
     try:
-        gc = gspread.service_account_from_dict(eval(SERVICE_ACCOUNT_JSON))
+        gc = gspread.service_account_from_dict(json.loads(SERVICE_ACCOUNT_JSON))
         sheet_ids = st.text_area(
             "📎 Enter comma-separated Google Sheet IDs:",
             placeholder="1abcXyz..., 1defPqr..."
@@ -124,7 +125,10 @@ Question:
     return call_llm(prompt)
 
 def is_safe_code(code):
-    banned = ["import", "os.", "system(", "open(", "eval(", "exec(", "subprocess"]
+    banned = [
+        "import", "os", "system", "open", "eval", "exec", "subprocess",
+        "__import__", "getattr", "setattr", "delattr", "execfile"
+    ]
     return not any(b in code.lower() for b in banned)
 
 def run_query(question, dfs):
