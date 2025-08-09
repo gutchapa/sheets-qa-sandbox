@@ -1,6 +1,6 @@
 # sheets-qa-sandbox
 
-# Sheet-QA (Sandbox-ready)
+# Sheet-QA (Sandboxed)
 
 This repository contains a Streamlit Google Sheets Q&A app wired to a sandbox runner that
 executes generated Pandas code safely.
